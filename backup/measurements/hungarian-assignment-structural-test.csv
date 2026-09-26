@@ -1,0 +1,4 @@
+strategy,F_0.5,preds
+"current (multi-match, threshold only)",0.9317,122602
+cap 1 per S1 entity (top-p),0.6773,37357
+Hungarian-style bijection (1-1 both sides),0.6773,37357

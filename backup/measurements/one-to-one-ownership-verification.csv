@@ -1,0 +1,6 @@
+metric,value
+total S2/S3 links in ground truth,7638365
+distinct S2/S3 IDs used,7638365
+IDs owned by exactly 1 S1 entity,7638365
+IDs owned by >1 S1 entity,0
+share violating one-to-one,0.0000%

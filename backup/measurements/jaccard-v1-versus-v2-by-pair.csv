@@ -1,0 +1,10 @@
+field,pair,v1,v2,gain
+name,Acme SARL | Acme,0.500,1.000,0.500
+name,Boulangerie Dupont SAS | Boulangerie Dupont,0.667,1.000,0.333
+name,Sharma Pvt Limited | Sharma,0.333,1.000,0.667
+name,Zephay Labs Inc | Zephay Labs,0.667,1.000,0.333
+addr,"12 Rue de Rivoli, Paris 75001 | 12 R de Rivoli...",0.571,0.833,0.262
+addr,"5 Impasse des Lilas, Lyon | 5 Imp des Lilas, Lyon",0.667,1.000,0.333
+addr,"Near SBI ATM, Sector 15, Gurgaon, Hary | Nr SB...",0.600,1.000,0.400
+addr,"B 016 Industrial Estate, Indore, Madhy | B 16 ...",0.444,1.000,0.556
+addr,"14 Main Road, Chennai, Tamil Nadu | 14 Mn Rd, ...",0.375,1.000,0.625

@@ -1,0 +1,9 @@
+country,blocking,K,recall,cand_per_entity
+India,word,20,0.9175,31.8
+India,word,50,0.9361,83.5
+India,word+ngram,20,0.9443,55.7
+India,word+ngram,50,0.9561,146.4
+US,word,20,0.9807,31.3
+US,word,50,0.9875,83.2
+US,word+ngram,20,0.9892,52.3
+US,word+ngram,50,0.9933,142.8

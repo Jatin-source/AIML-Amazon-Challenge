@@ -1,0 +1,10 @@
+{
+  "thresholds": {
+    "India": 0.65,
+    "US": 0.675
+  },
+  "france_threshold": 0.7,
+  "combined_f05": 0.9424,
+  "blocking": "word20+gram20 union on norm2",
+  "model": "lgbm_v2.txt"
+}

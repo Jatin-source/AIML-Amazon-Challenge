@@ -1,0 +1,17 @@
+country,blocking,K,recall,cand_per_entity,ms_per_entity
+India,word2,10,0.8954,14.8,11.8
+India,word2,15,0.9096,23.3,11.8
+India,word2,20,0.9167,31.9,11.8
+India,word2,30,0.9266,49.3,11.8
+India,word2+gram,10,0.9288,24.4,11.8
+India,word2+gram,15,0.9392,39.8,11.8
+India,word2+gram,20,0.9426,55.2,11.8
+India,word2+gram,30,0.9488,86.3,11.8
+US,word2,10,0.9680,14.6,13.0
+US,word2,15,0.9754,23.2,13.0
+US,word2,20,0.9799,31.9,13.0
+US,word2,30,0.9841,49.4,13.0
+US,word2+gram,10,0.9830,22.8,13.0
+US,word2+gram,15,0.9870,37.5,13.0
+US,word2+gram,20,0.9888,52.4,13.0
+US,word2+gram,30,0.9917,82.5,13.0

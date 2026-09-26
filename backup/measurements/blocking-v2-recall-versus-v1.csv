@@ -1,0 +1,11 @@
+country,K,recall_v2,recall_v1,cand_per_entity,delta
+India,10,0.7623,NaN,10.0,NaN
+India,15,0.7796,NaN,15.0,NaN
+India,20,0.7899,0.9175,20.0,-0.1276
+India,30,0.8005,NaN,30.0,NaN
+India,50,0.8133,0.9361,50.0,-0.1228
+US,10,0.8412,NaN,10.0,NaN
+US,15,0.8649,NaN,15.0,NaN
+US,20,0.8797,0.9807,20.0,-0.1010
+US,30,0.8943,NaN,30.0,NaN
+US,50,0.9107,0.9875,50.0,-0.0768

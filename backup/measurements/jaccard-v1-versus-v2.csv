@@ -1,0 +1,7 @@
+pair,name_jac_v1,name_jac_v2_core
+Acme SARL | Acme,0.500,1.000
+Boulangerie Dupont SAS | Boulangerie Dupont,0.667,1.000
+Sharma Pvt Limited | Sharma,0.333,1.000
+"12 Rue de Rivoli, Paris 75001 | 12 R de Rivoli, Paris",0.571,0.833
+"5 Impasse des Lilas, Lyon | 5 Imp des Lilas, Lyon",0.667,1.000
+"Near SBI ATM, Sector 15, Gurgaon, | Nr SBI ATM, Se...",0.600,1.000
