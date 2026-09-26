@@ -1,6 +1,6 @@
 # PHASES - Amazon ML Challenge 2026 (Team Zero)
 
-Business Entity Resolution. Status as of 26 Sep 2026, ~18:15 IST.
+Business Entity Resolution. Status as of 26 Sep 2026, ~20:40 IST.
 Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 
 | # | Phase | Objective | Definition of Done | Priority | Status |
@@ -11,9 +11,9 @@ Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 | 3b | Hardware upgrade | Move to a node that can hold the candidate set | LARGE 64C/246GB confirmed | CRITICAL | DONE |
 | 4 | F_0.5 scorer | Trustworthy local metric | Reproduces README example 0.7143 | CRITICAL | DONE |
 | 5 | Frozen holdout | Entity-level stratified split + all-empty floor | Split frozen to Parquet, floor measured | CRITICAL | DONE |
-| 6 | Normalisation | Unicode/case/legal-suffix/address abbreviation cleanup | Applied identically to train and test | CRITICAL | **IN PROGRESS** |
-| 7 | Blocking / candidate generation | Reduce 1.7e13 pairs to a scoreable set | Recall ceiling >= 0.95 measured on train GT | CRITICAL | TODO |
-| 8 | Pair features | Name + address + country similarity matrix | Feature matrix built on holdout | CRITICAL | TODO |
+| 6 | Normalisation | Unicode/case/legal-suffix/address abbreviation cleanup | Applied identically to train and test | CRITICAL | DONE |
+| 7 | Blocking / candidate generation | Reduce 1.7e13 pairs to a scoreable set | Recall measured: India 0.9440 / US 0.9844 at ~84 cand/entity | CRITICAL | DONE |
+| 8 | Pair features | Name + address + country similarity matrix | Feature matrix built on holdout | CRITICAL | **IN PROGRESS** |
 | 9 | LightGBM baseline | First honest local F_0.5 | Score recorded, beats all-empty floor | CRITICAL | TODO |
 | 10 | Threshold tuning | Optimise F_0.5 (not F1), per country | Sweep done, France path validated | CRITICAL | TODO |
 | 11 | Full-test inference | Generate both submission TSVs | validate_submission.py exits 0 | CRITICAL | TODO |
@@ -25,7 +25,7 @@ Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 
 ## Where we are
 
-**Phase 6 - normalisation.** Phases 1-5 are complete and verified. Holdout is frozen at 331,024 entities; measured all-empty floor is **0.0558**, oracle **1.0000**. Phase 16 is
+**Phase 8 - pair features.** Phases 1-7 are complete and verified. Holdout frozen at 331,024 entities (all-empty floor **0.0558**, oracle **1.0000**). Blocking locked at raw50+cos50 union: recall **India 0.9440 / US 0.9844**, ~84 candidates per entity. That recall caps the achievable F_0.5 near **0.984** even at perfect precision, so the honest target is **0.93-0.96**, not 0.99. Phase 16 is
 rejected on hardware: the node has no GPU, so transformer embeddings over ~10M
 records are not finishable in the time available.
 
