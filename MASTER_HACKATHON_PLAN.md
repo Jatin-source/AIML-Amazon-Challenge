@@ -391,3 +391,51 @@ Never spend a slot on a file that has not passed `validate_submission.py` locall
 - **Best Public:** none yet
 - **Next Action:** build F_0.5 scorer, validate against README worked example (0.714)
 - **Biggest Risk:** France domain shift, 259,452 test entities with no training analogue
+
+---
+
+## Q. HARDWARE REVISION - upgraded to LARGE (26 Sep 2026)
+
+Section O measured a SMALL node. The kernel was switched to **LARGE** and re-probed:
+
+| Resource | SMALL (old) | **LARGE (current)** |
+|---|---|---|
+| CPU cores | 16 | **64** |
+| RAM total | 61.4 GB | **246.6 GB** |
+| RAM available | 58.3 GB | **241.4 GB** |
+| Disk free | 1,236.7 GB | 1,235.9 GB |
+| GPU | none | **none - still CPU only** |
+
+Libraries reinstalled after the restart (pip returncode 0, all imports verified):
+lightgbm 4.7.0, rapidfuzz 3.14.6, jellyfish, optuna 5.0.0. Pre-installed: numpy 2.2.6,
+pandas 2.3.1, scipy 1.16.0, sklearn 1.7.1, pyarrow 21.0.0.
+
+### What 4x CPU and 4x RAM change
+
+1. **`n_jobs` / `num_threads` = 64** everywhere. Blocking is embarrassingly parallel per
+   country, so TF-IDF + `rapidfuzz.cdist` should scale close to linearly.
+2. **241 GB RAM removes the candidate-explosion ceiling.** A larger top-K per S1 entity
+   is now affordable, which directly raises the blocking recall ceiling - the single
+   hardest cap on the final score.
+3. **GPU is still absent.** The CPU string-similarity + LightGBM plan is unchanged;
+   transformer embeddings remain rejected on hardware.
+4. **Session-installed packages die on every node switch.** Do not switch again without
+   budgeting the reinstall, and pin all four in `requirements.txt`.
+
+### Stash cleanup
+
+The duplicate `projects/AIML-Amazon-Challenge` (hyphen) folder was removed after
+verifying all 4 of its files exist at identical sizes in
+`projects/AIML_Amazon_Challenge/Documents/`. `projects/` now holds exactly one project
+folder, `AIML_Amazon_Challenge`, containing `Dataset/`, `Documents/`, and
+`doc related to dataset/`.
+
+### Live status
+
+- **Phase:** 4 complete (F_0.5 scorer validated, README example = 0.7143), 5 next (frozen holdout)
+- **Hardware:** 64 CPU / 246.6 GB RAM / no GPU / 1.2 TB disk
+- **Team:** Zero | 5 submissions/day
+- **GitHub:** pushing successfully
+- **Best Local F_0.5:** none yet
+- **Next Action:** entity-level stratified holdout split, then measure the all-empty floor
+- **Biggest Risk:** France domain shift, 259,452 test entities with no training analogue
