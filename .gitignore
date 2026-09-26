@@ -1,0 +1,30 @@
+# ===== COMPETITION DATA - NEVER COMMIT =====
+Dataset/
+dataset/
+datasets/
+*.tsv
+*.csv
+*.parquet
+*.zip
+*.pdf
+*.jpeg
+*.jpg
+*.png
+output/
+outputs/
+
+# ===== MODELS / ARTEFACTS =====
+*.pkl
+*.joblib
+*.bin
+*.npy
+*.npz
+models/
+
+# ===== PYTHON =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.env
