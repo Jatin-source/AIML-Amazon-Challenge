@@ -439,3 +439,50 @@ folder, `AIML_Amazon_Challenge`, containing `Dataset/`, `Documents/`, and
 - **Best Local F_0.5:** none yet
 - **Next Action:** entity-level stratified holdout split, then measure the all-empty floor
 - **Biggest Risk:** France domain shift, 259,452 test entities with no training analogue
+
+---
+
+## R. Phase 5 DONE - Frozen holdout (26 Sep 2026)
+
+Entity-level 85/15 split of the 2,206,821 train S1 entities, stratified by
+`country x min(n_matches, 6)`, `random_state=42`. Reproducible via
+`src/make_holdout.py`.
+
+| Split | Entities | Mean matches | Singleton % | India % | US % |
+|---|---|---|---|---|---|
+| train | 1,875,797 | 3.461 | 5.58 | 40.02 | 59.98 |
+| holdout | **331,024** | 3.461 | 5.58 | 40.02 | 59.98 |
+
+Stratification is exact - every distribution matches to 2 decimal places, so holdout
+scores are comparable to train scores.
+
+### Measured score bounds on the holdout
+
+| Reference | F_0.5 | Meaning |
+|---|---|---|
+| Predict all-empty | **0.0558** | Hard floor. Any model must beat this. |
+| Oracle (ground truth as prediction) | **1.0000** | Confirms the scorer has no ceiling bug. |
+
+The 0.0558 floor is the holdout singleton share (5.58%), exactly as predicted from the
+train distribution - independent confirmation that the split and the scorer agree.
+
+### Artefacts (conversation folder, gitignored)
+
+- `outputs/holdout_split.parquet` - entity_id, country, n_matches, split
+- `outputs/holdout_ground_truth.tsv` - 331,024 rows for local scoring
+
+### Why entity-level, not pair-level
+
+A pair-level split would put some of an S1 entity's true matches in train and the rest in
+holdout. The model would then see validation answers during training and the local score
+would be fiction. The split key is the S1 entity, so every record linked to a holdout
+entity is held out with it.
+
+### Live status
+
+- **Phase:** 5 complete, 6 next (normalisation)
+- **Hardware:** 64 CPU / 246.6 GB RAM / no GPU
+- **Local floor:** 0.0558 (all-empty) | **Oracle:** 1.0000
+- **Best Local F_0.5:** none yet (no model trained)
+- **Next Action:** Unicode/case/legal-suffix/address normalisation applied identically to train and test
+- **Biggest Risk:** France domain shift, 259,452 test entities with no training analogue
