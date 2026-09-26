@@ -1,0 +1,7 @@
+country,config,recall,cand_per_entity
+India,raw30+cos30,0.9329,49.2
+India,raw50+cos50,0.9440,83.6
+India,raw100+cos100,0.9515,170.1
+US,raw30+cos30,0.9816,48.4
+US,raw50+cos50,0.9844,83.1
+US,raw100+cos100,0.9883,169.9

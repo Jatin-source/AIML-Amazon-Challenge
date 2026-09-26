@@ -1,0 +1,9 @@
+check,value,expected
+data rows,1732544,1732544
+rows with != 2 tab fields,0,0
+duplicate source1_entity_id,0,0
+duplicate IDs within a list,0,0
+lists containing non-S2/S3 IDs,0,0
+empty rows (predicted singletons),110166,~5.6% of rows
+mean IDs per non-empty row,3.33,~3.46 (train mean)
+max IDs in a list,25,<= 11 (train max)

@@ -1,0 +1,7 @@
+{
+  "thresholds": {
+    "India": 0.675,
+    "US": 0.725
+  },
+  "combined_f05": 0.9317
+}

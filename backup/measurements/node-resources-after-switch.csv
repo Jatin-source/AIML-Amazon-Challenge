@@ -1,0 +1,7 @@
+item,value
+cpu_count_logical,64
+cpu_affinity,64
+mem_total_gb,246.6
+mem_available_gb,241.4
+disk_free_gb,1235.9
+gpu,none - CPU only

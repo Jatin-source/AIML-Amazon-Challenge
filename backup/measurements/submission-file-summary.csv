@@ -1,0 +1,3 @@
+file,rows,entities_with_ids,empty_rows,mean_ids,mb
+matching_results.tsv,1732544,1622378,110166,3.33,92.1
+candidate_pairs.tsv,1732544,1732543,1,81.30,1837.9

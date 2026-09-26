@@ -1,0 +1,9 @@
+item,value
+python,3.12.9
+cpu_count_logical,16
+cpu_affinity,16
+mem_total_gb,61.4
+mem_available_gb,58.3
+disk_free_gb,1236.7
+disk_total_gb,2460.7
+gpu,no nvidia-smi — CPU only

@@ -1,0 +1,5 @@
+metric,value
+brute-force pairs (all S1 x all S2+S3),1.727e+13
+pairs actually scored,140864009
+candidates per S1 entity,81.30
+reduction ratio,99.999184%

@@ -1,0 +1,4 @@
+country,entities,shards_expected,shards_done,scored_pairs,status
+France,259452,6,6,19959055,COMPLETE
+India,809986,17,17,67043682,COMPLETE
+US,663106,14,9,36548888,INCOMPLETE

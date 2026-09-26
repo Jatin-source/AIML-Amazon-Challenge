@@ -1,0 +1,12 @@
+group,files,total_mb,max_file_mb,github_ok
+outputs/test_scored,37,2009.0,59.1,True
+outputs/output,2,1930.0,1837.9,False
+outputs/parts,74,1928.4,54.0,True
+outputs/norm,6,1393.3,299.0,False
+outputs/feat,2,391.8,223.5,False
+...,...,...,...,...
+src/features.py,1,0.0,0.0,True
+src/infer.py,1,0.0,0.0,True
+src/make_holdout.py,1,0.0,0.0,True
+src/normalize.py,1,0.0,0.0,True
+src/scorer.py,1,0.0,0.0,True

@@ -1,0 +1,10 @@
+library,status,version
+lightgbm,OK,4.7.0
+rapidfuzz,OK,3.14.6
+jellyfish,OK,?
+optuna,OK,5.0.0
+numpy,OK,2.2.6
+pandas,OK,2.3.1
+scipy,OK,1.16.0
+sklearn,OK,1.7.1
+pyarrow,OK,21.0.0

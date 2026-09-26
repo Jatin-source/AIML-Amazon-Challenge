@@ -1,0 +1,8 @@
+file,rows,columns,size_mb
+train_source1,2206821,entity_id | business_name | business_address |...,210.1
+train_source2,5034616,entity_id | business_name | business_address |...,489.3
+train_source3,5285603,entity_id | business_name | business_address |...,503.7
+train_ground_truth,2206821,source1_entity_id | matched_entity_ids,127.0
+test_source1,1732544,entity_id | business_name | business_address |...,175.0
+test_source2,4887273,entity_id | business_name | business_address |...,509.5
+test_source3,5082316,entity_id | business_name | business_address |...,506.0

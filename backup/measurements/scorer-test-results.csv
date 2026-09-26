@@ -1,0 +1,8 @@
+case,F_0.5,expected,pass
+README example,0.7143,0.714,PASS
+perfect match,1.0000,1.000,PASS
+correct singleton,1.0000,1.000,PASS
+false merge on singleton,0.0000,0.000,PASS
+missed all (empty pred),0.0000,0.000,PASS
+no overlap,0.0000,0.000,PASS
+"1 of 2 correct, 1 wrong",0.5000,0.500,PASS

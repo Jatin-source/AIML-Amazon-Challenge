@@ -1,0 +1,8 @@
+item,value
+cpu_affinity,64
+mem_total_gb,246.6
+mem_available_gb,241.5
+cgroup_limit_gb,252.3
+cgroup_current_gb,0.39
+cgroup_peak_gb,0.39
+gpu,none - CPU only

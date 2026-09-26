@@ -1,0 +1,10 @@
+package,pinned
+numpy,2.2.6
+pandas,2.3.1
+scipy,1.16.0
+scikit-learn,1.7.1
+pyarrow,21.0.0
+lightgbm,4.7.0
+rapidfuzz,3.14.6
+jellyfish,NOT INSTALLED
+optuna,NOT INSTALLED
