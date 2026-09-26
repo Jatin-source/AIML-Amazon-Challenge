@@ -564,3 +564,115 @@ shard writing makes both passes resumable after a kill.
 - **Best Local F_0.5:** none yet (no classifier trained)
 - **Next Action:** build the pair feature matrix on holdout candidates, then LightGBM baseline
 - **Biggest Risk:** France - 259,452 test entities, no French records in the train pool to calibrate against
+
+---
+
+## T. Phases 8-11 DONE - Model trained, full test scored, validator PASS (26 Sep 2026)
+
+### Phase 8 - labeled pairs and features
+
+Blocker run over a 60k-entity train sample + 40k-entity holdout sample (disjoint, drawn
+from the frozen Phase 5 split).
+
+| Country | Entities | Pairs | Positives | Pos rate | Block recall | Cand/entity | Runtime |
+|---|---|---|---|---|---|---|---|
+| India | 39,998 | 3,337,503 | 129,864 | 3.89% | 0.9393 | 83.4 | 2.6 min |
+| US | 60,002 | 4,981,288 | 204,288 | 4.10% | 0.9841 | 83.0 | 2.8 min |
+
+Realised block recall (0.9393 / 0.9841) matches the Phase 7f estimate (0.9440 / 0.9844)
+to within 0.5 pt - the locked config reproduces on fresh samples.
+
+**33 features** (`src/features.py`), all country-agnostic by construction so the France
+slice flows through the identical code path:
+
+- 5 rapidfuzz scorers x 2 fields: ratio, token_set, token_sort, partial, Jaro-Winkler
+- Token features x 2 fields: Jaccard, containment, intersection size, length delta
+- Numeric: any-digit-match, digit Jaccard, both-present
+- Retrieval: raw_rank, cos_rank, cos_score, in_both_rankers, is_s3
+- Per-entity relative: rel/gap vs the entity's best candidate for 3 columns, plus n_cand
+
+Feature build: 8.32M pairs in **1.6 min** on 64 cores via `rapidfuzz.process.cpdist`.
+
+### Phase 9/10 - LightGBM and threshold sweep
+
+`objective=binary, lr=0.06, num_leaves=127, min_data_in_leaf=200, 400 rounds` -
+trained in **0.6 min**. Scored on the untouched 40,000-entity holdout, graded against
+**full ground truth including blocking misses**, so the number is not flattered.
+
+| Threshold | F_0.5 | Pred/entity |
+|---|---|---|
+| 0.50 | 0.9261 | 3.23 |
+| 0.60 | 0.9303 | 3.15 |
+| **0.70** | **0.9315** | 3.06 |
+| 0.80 | 0.9288 | 2.96 |
+| 0.90 | 0.9140 | 2.80 |
+
+Per-country refinement on a 0.025 grid:
+
+| Country | Best threshold | F_0.5 |
+|---|---|---|
+| India | 0.675 | 0.8982 |
+| US | 0.725 | 0.9541 |
+
+Combined **0.9317** vs global-0.70 **0.9315**. The per-country split buys only
++0.0002 - the curves are flat near their optima, so this is not a meaningful gain.
+Carried anyway because it costs nothing at inference time.
+
+**Headline: local F_0.5 = 0.9317**, against an all-empty floor of 0.0558 and a
+blocking-imposed ceiling of ~0.984. The model captures ~95% of the reachable range.
+
+India trails US by 6.6 pts, and the cause is upstream: India block recall is 0.9393 vs
+0.9841. Any further India gain must come from blocking, not the classifier.
+
+### Phase 11 - full test inference
+
+The stall that appeared to be "Phase 8 hanging" was in fact Phase 11. Root cause: the
+inference cell concatenated **all three countries' S2+S3 pools** into one 10.3M-row
+frame before filtering to the country being processed, and rebuilt the inverted index
+from scratch on every retry. Fix: Parquet predicate pushdown
+(`filters=[("country", "==", c)]`) so only the needed pool loads, plus shard-level skip
+logic making every re-run resumable.
+
+| Country | Entities | Pool | Shards | Scored pairs |
+|---|---|---|---|---|
+| France | 259,452 | 1,434,993 | 6/6 | 19,959,055 |
+| India | 809,986 | 4,717,565 | 17/17 | 67,043,682 |
+| US | 663,106 | 3,817,031 | 14/14 | 53,861,272 |
+| **Total** | **1,732,544** | - | **37/37** | **140,864,009** |
+
+France needed no special handling: it has its own test pool (703,378 S2 + 731,615 S3),
+so same-country blocking applies. Threshold 0.700 (the uncalibrated global optimum) was
+used for France since no French ground truth exists to tune against. Pilot diagnostics
+on 50k France entities showed 96.0% of entities retaining >=1 match at 0.5, falling only
+to 94.7% at 0.8 - the probability distribution is not degenerate on the unseen domain,
+which is the best available evidence that the model transfers.
+
+### Submission files
+
+| File | Rows | With matches | Empty | Mean IDs | Size |
+|---|---|---|---|---|---|
+| `matching_results.tsv` | 1,732,544 | 1,622,378 | 110,166 | 3.33 | 92.1 MB |
+| `candidate_pairs.tsv` | 1,732,544 | 1,732,543 | 1 | 81.30 | 1,837.9 MB |
+
+Mean 3.33 predicted matches tracks the train distribution mean of 3.46. Empty rows are
+6.4% against a 5.6% train singleton rate - no systematic over- or under-prediction.
+
+**Official validator: exit code 0 - `PASS - no blocking issues found. Safe to submit.`**
+
+### Artefacts
+
+- `src/features.py` - 33-feature pair matrix
+- `src/infer.py` - chunked, resumable, threaded inference
+- `requirements.txt` - 7 pinned packages (jellyfish/optuna deliberately absent, unused)
+- `outputs/lgbm_baseline.txt` - trained booster
+- `outputs/thresholds.json` - locked per-country thresholds
+- `outputs/output/{matching_results,candidate_pairs}.tsv` - validated submission
+
+### Live status
+
+- **Phase:** 11 complete (validator PASS), 12 next (leaderboard upload)
+- **Local F_0.5:** **0.9317** | floor 0.0558 | blocking ceiling ~0.984
+- **Thresholds:** India 0.675, US 0.725, France 0.700
+- **Next Action:** upload `matching_results.tsv`, compare public score against 0.9317
+- **Biggest lever remaining:** India blocking recall 0.9393 - the classifier cannot fix
+  a candidate that was never retrieved
