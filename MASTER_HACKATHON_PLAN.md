@@ -486,3 +486,81 @@ entity is held out with it.
 - **Best Local F_0.5:** none yet (no model trained)
 - **Next Action:** Unicode/case/legal-suffix/address normalisation applied identically to train and test
 - **Biggest Risk:** France domain shift, 259,452 test entities with no training analogue
+
+---
+
+## S. Phase 7 DONE - Blocking LOCKED (26 Sep 2026)
+
+### What was measured, in order
+
+| Step | Finding |
+|---|---|
+| 7a Normalised cache | 22.2M records normalised in 126 s total; Parquet cache written |
+| 7b Key diagnostics | `>=1 shared addr token` covers 95.6% of true pairs; **postcode covers 0.19%** - postcode blocking is worthless here (pin coverage is only ~1%) |
+| 7c Raw IDF-sum, K=50 | India 0.8946, US 0.9711 |
+| 7d Uncapped union | India **0.9925**, US **0.9997**, gold-in-country-pool 1.0000 |
+| 7e Cosine ranker | India rank p99 **19,700 -> 97**; recall@50 India 0.9372, US 0.9668 |
+| 7f Dual union | **raw50 + cos50: India 0.9440, US 0.9844, ~84 cand/entity** |
+
+### The decisive diagnosis (7d)
+
+Uncapped retrieval recall is 0.9925 / 0.9997 and every true match lives in its own
+country pool. So the loss at K=50 was **never a retrieval failure - it was a ranking
+failure.** Raw IDF-sum is length-biased: a verbose Indian address accumulates more
+matching tokens than a terse true match, so long non-matches outscored short true
+matches and buried India's gold at p99 rank ~19,700. L2 cosine normalisation removed
+that bias and cut p99 rank to 97.
+
+Cosine helped India (+4.3 pts) but slightly hurt US (-0.4 pts): the two rankers fail on
+different pairs, so the **union** is strictly better than either. Locked config:
+
+```
+candidates(e) = top50_raw_idf(e) UNION top50_cosine(e)   within e.country
+```
+
+### Honest ceiling: 0.99 is not reachable, ~0.95-0.96 is
+
+From the measured frontier (section T of PHASES reasoning, run on all 331,024 holdout
+entities at **perfect precision**):
+
+| Recall | Best possible F_0.5 |
+|---|---|
+| 1.00 | 1.0000 |
+| 0.99 | 0.9971 |
+| 0.97 | 0.9910 |
+| 0.95 | 0.9846 |
+| 0.90 | 0.9676 |
+
+Blocking recall is a **hard cap** - a match not in the candidate set can never be
+predicted. Current weighted recall is ~0.96 (US 0.9844 x 60% + India 0.9440 x 40%), so
+even a perfect-precision matcher tops out near **0.984**. Realistic target with a real
+classifier: **0.93-0.96**. Reaching 0.99 would require >=0.99 blocking recall, which the
+uncapped ceiling (India 0.9925) barely permits even at K=infinity.
+
+### Runtime estimate for the locked config
+
+Measured single-process query cost: 1.1 ms (US) - 1.6 ms (India) for one ranker at
+K=50; the dual union roughly doubles it to **~2.5-3 ms per entity**.
+
+| Pass | Entities | Single process | Notes |
+|---|---|---|---|
+| Train candidates (400k sample for the classifier) | 400,000 | ~20 min | enough rows for LightGBM |
+| Full test inference | 1,732,544 | **~85-90 min** | plus ~2 min index build per country |
+
+Index build is 28-31 s per country and memory-safe at ~230-245 MB per index. Chunked
+shard writing makes both passes resumable after a kill.
+
+### Artefacts
+
+- `src/blocking.py` - `InvertedIndex` (CSR int32 postings), `query`, `query_cosine`
+- `src/candidates.py` - locked raw50+cos50 generator, chunked and resumable
+- `outputs/norm/*.parquet` - normalised cache for all 6 source files
+
+### Live status
+
+- **Phase:** 7 complete (blocking locked), 8 next (pair features)
+- **Blocking recall:** India 0.9440 / US 0.9844, ~84 candidates per entity
+- **Implied score cap:** ~0.984 at perfect precision; realistic target 0.93-0.96
+- **Best Local F_0.5:** none yet (no classifier trained)
+- **Next Action:** build the pair feature matrix on holdout candidates, then LightGBM baseline
+- **Biggest Risk:** France - 259,452 test entities, no French records in the train pool to calibrate against
