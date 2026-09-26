@@ -1,6 +1,6 @@
 # PHASES - Amazon ML Challenge 2026 (Team Zero)
 
-Business Entity Resolution. Status as of 26 Sep 2026, ~20:40 IST.
+Business Entity Resolution. Status as of 26 Sep 2026, ~23:30 IST.
 Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 
 | # | Phase | Objective | Definition of Done | Priority | Status |
@@ -13,11 +13,11 @@ Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 | 5 | Frozen holdout | Entity-level stratified split + all-empty floor | Split frozen to Parquet, floor measured | CRITICAL | DONE |
 | 6 | Normalisation | Unicode/case/legal-suffix/address abbreviation cleanup | Applied identically to train and test | CRITICAL | DONE |
 | 7 | Blocking / candidate generation | Reduce 1.7e13 pairs to a scoreable set | Recall measured: India 0.9440 / US 0.9844 at ~84 cand/entity | CRITICAL | DONE |
-| 8 | Pair features | Name + address + country similarity matrix | Feature matrix built on holdout | CRITICAL | **IN PROGRESS** |
-| 9 | LightGBM baseline | First honest local F_0.5 | Score recorded, beats all-empty floor | CRITICAL | TODO |
-| 10 | Threshold tuning | Optimise F_0.5 (not F1), per country | Sweep done, France path validated | CRITICAL | TODO |
-| 11 | Full-test inference | Generate both submission TSVs | validate_submission.py exits 0 | CRITICAL | TODO |
-| 12 | Submit & iterate | Anchor a public score, compare vs local | Public/local gap understood | CRITICAL | TODO |
+| 8 | Pair features | Name + address + country similarity matrix | 33 features on 8.32M labeled pairs | CRITICAL | DONE |
+| 9 | LightGBM baseline | First honest local F_0.5 | **0.9315** at global th=0.70 vs 0.0558 floor | CRITICAL | DONE |
+| 10 | Threshold tuning | Optimise F_0.5 (not F1), per country | India 0.675 / US 0.725 -> **0.9317** | CRITICAL | DONE |
+| 11 | Full-test inference | Generate both submission TSVs | 37/37 shards, 140.9M pairs, validator **exit 0** | CRITICAL | DONE |
+| 12 | Submit & iterate | Anchor a public score, compare vs local | Public/local gap understood | CRITICAL | **IN PROGRESS** |
 | 13 | Final package | Zero_submission.zip + methodology | Reproducible from scratch | CRITICAL | TODO |
 | 14 | Feature expansion | Extra token/rank/address features | Each change scored vs baseline | LATER | TODO |
 | 15 | Ensembling | Blend / stack pair scorers | Beats single model on holdout | OPTIONAL | TODO |
@@ -25,9 +25,28 @@ Legend: DONE | **IN PROGRESS** | TODO | OPTIONAL
 
 ## Where we are
 
-**Phase 8 - pair features.** Phases 1-7 are complete and verified. Holdout frozen at 331,024 entities (all-empty floor **0.0558**, oracle **1.0000**). Blocking locked at raw50+cos50 union: recall **India 0.9440 / US 0.9844**, ~84 candidates per entity. That recall caps the achievable F_0.5 near **0.984** even at perfect precision, so the honest target is **0.93-0.96**, not 0.99. Phase 16 is
-rejected on hardware: the node has no GPU, so transformer embeddings over ~10M
-records are not finishable in the time available.
+**Phase 12 - leaderboard submission.** Phases 1-11 are complete and verified.
+
+- Local **F_0.5 = 0.9317** on the frozen 40k-entity holdout, graded against full ground
+  truth including blocking misses. Floor (all-empty) 0.0558; blocking-imposed ceiling
+  ~0.984, so the model captures ~95% of the reachable range.
+- Thresholds locked: India 0.675, US 0.725, France 0.700 (uncalibrated global optimum -
+  no French ground truth exists to tune against).
+- Full test scored: **37/37 shards, 140,864,009 candidate pairs, 1,732,544 entities.**
+- `matching_results.tsv` (92 MB) and `candidate_pairs.tsv` (1.8 GB) both pass the
+  official `validate_submission.py` with **exit code 0**.
+
+Phase 16 stays rejected on hardware: no GPU, so transformer embeddings over ~10M records
+are not finishable in the time available.
+
+**What actually stalled earlier:** not Phase 8 (which took 1.6 min) but Phase 11
+inference, which was loading all three countries' 10.3M-row pool before filtering and
+rebuilding the index on every retry. Fixed with Parquet predicate pushdown plus
+resumable shard writes.
+
+**Biggest remaining lever:** India blocking recall 0.9393 vs US 0.9841. India's 6.6-pt
+F_0.5 deficit is a retrieval problem, not a classifier problem - a candidate that was
+never retrieved cannot be predicted.
 
 ## Gate rules
 
