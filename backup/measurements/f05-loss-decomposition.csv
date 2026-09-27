@@ -1,0 +1,7 @@
+component,value,note
+queries in holdout,4000.0,"India, K_TOP=50"
+queries with >=1 true match retrieved,3397.0,84.92% blocking coverage
+queries with ZERO true match retrieved,603.0,score 0 at ANY threshold - unfixable by ranking
+macro F0.5 ceiling (blocking-limited),0.8492,max achievable if ranker were perfect
+macro F0.5 achieved @0.60,0.8116,measured
+ranking loss (ceiling - achieved),0.0376,what better ranking/threshold can recover
