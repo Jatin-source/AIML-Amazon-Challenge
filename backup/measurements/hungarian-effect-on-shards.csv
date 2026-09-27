@@ -1,0 +1,3 @@
+country,threshold,shards,pairs_above_t,unique_candidates,candidates_claimed_twice_plus,rows_hungarian_would_delete,pct_of_predictions_deleted,s1_entities_with_pred,avg_pred_per_entity
+France,0.8,13,1105399,859466,100241,245933,22.248,251827,4.39
+India,0.9,41,1992741,1960572,18933,32169,1.614,689084,2.89
