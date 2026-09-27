@@ -1,0 +1,4 @@
+experiment_id,train_country,eval_country,blocking_version,normalization_version,feature_version,model,threshold,candidate_recall,precision,recall,micro_f05,macro_f05_haspos,macro_f05_all,false_positives,false_negatives,runtime_seconds,peak_ram_gb,decision
+E01_india_micro_t0.80,India,India_holdout,v3,v2,v3,lgbm_300r_127lv,0.8,0.8492,0.9823,0.9107,0.9671,0.9511,0.8077,157,857,6,,REJECT - micro-optimal threshold is macro-suboptimal
+E02_india_macro_t0.60,India,India_holdout,v3,v2,v3,lgbm_300r_127lv,0.6,0.8492,0.9658,0.9476,0.9621,0.9557,0.8116,322,503,6,,ACCEPT - best measured macro F0.5
+E03_india_default_t0.50,India,India_holdout,v3,v2,v3,lgbm_300r_127lv,0.5,0.8492,0.9561,0.9578,0.9564,0.9545,0.8106,422,405,6,,BASELINE - V3 hardcoded default
