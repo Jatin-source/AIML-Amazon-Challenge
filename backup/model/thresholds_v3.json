@@ -1,1 +1,9 @@
-{"thresholds": {"India": 0.5, "US": 0.5}, "france_threshold": 0.5}
+{
+  "thresholds": {
+    "India": 0.9,
+    "US": 0.95,
+    "France": 0.8
+  },
+  "france_threshold": 0.8,
+  "basis": "entity-level macro F0.5 on cached holdouts; France via min-max-regret across 4 curves"
+}
