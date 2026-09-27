@@ -1,0 +1,3 @@
+experiment_id,train_country,eval_country,queries,candidate_recall,best_threshold,macro_f05_all,macro_f05_haspos,precision,recall,fp,fn,macro_at_050,macro_at_095,runtime_seconds
+ZS_India_to_US,India,US_holdout,4000,0.934,0.6,0.8574,0.918,0.9427,0.8914,647,1297,0.8555,0.8017,6.6
+ZS_US_to_India,US,India_holdout,4000,0.8492,0.95,0.7708,0.9076,0.927,0.873,660,1219,0.7437,0.7708,6.5
