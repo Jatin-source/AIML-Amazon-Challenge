@@ -1,0 +1,3 @@
+variant,queries,candidate_recall,true_match_recall,avg_candidates,queries_zero_recall,true_matches_only_from_ngram,seconds
+baseline,4000,0.8492,0.6877,50.0,603,0,47.4
+union,4000,0.9347,0.9234,64.8,261,666,40.4
